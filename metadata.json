@@ -1,0 +1,6 @@
+{
+  "name": "King Ragnar",
+  "description": "King Ragnar website featuring top navbar navigation with Home, Courses, Music, and Contact sections.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
