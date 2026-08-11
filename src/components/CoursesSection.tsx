@@ -16,7 +16,8 @@ import {
   ShieldCheck, 
   Play,
   BarChart,
-  Target
+  Target,
+  Lock
 } from 'lucide-react';
 
 interface CoursesSectionProps {
@@ -34,6 +35,8 @@ export interface CourseItem {
   instructor: string;
   badge: string;
   price: string;
+  originalPrice?: string;
+  isDiscounted?: boolean;
   description: string;
   highlights: string[];
   modules: { title: string; desc: string }[];
@@ -44,46 +47,46 @@ const COURSES_DATA: CourseItem[] = [
   {
     id: 'foundations-101',
     courseNumber: '01',
-    title: 'KRUMP FOUNDATIONS 101: THE BUCK POSTURE',
-    subtitle: 'Master the 5 Core Pillars of Raw Street Krump',
+    title: 'KRUMP FOUNDATION 101',
+    subtitle: 'Core Foundation & Cultural Movement Vocabulary',
     level: 'Beginner',
     duration: '4 Weeks',
     sessions: '12 Live Sessions',
     instructor: 'King Ragnar & Kranti Squad',
-    badge: 'MUST HAVE FOUNDATION',
-    price: '₹1,999',
-    description: 'The definitive entry course into authentic Krump dance. Build your buck posture, master explosive chest pops, precise jabs, heavy stomps, and sweeping arm swings without risking injury.',
+    badge: 'FOUNDATION ESSENTIALS',
+    price: '₹1,500',
+    description: 'The fundamentals of Krump — foundation, movement vocabulary, musicality, character, energy and basic understanding of the culture.',
     highlights: [
       'Anatomy of Chest Pops & Diaphragm Control',
       'Piston Jab Precision & Directional Targets',
       'Ground Reaction Force & Stomp Dynamics',
-      'Building your First 8-Count Krump Combo'
+      'Building your First Krump Concept Combo'
     ],
     modules: [
       { title: 'Module 1: Stance & Rooted Stomp', desc: 'Lower body alignment, center of gravity, and earth-shaking stomps.' },
       { title: 'Module 2: Upper Body Explosion', desc: 'Isolating chest pops and controlling arm swing velocity.' },
       { title: 'Module 3: Jabs & Speed Drills', desc: 'Piston jabs, cross snaps, and rapid-fire target drills.' },
-      { title: 'Module 4: Your First Cypher Round', desc: 'Putting the 5 pillars together in a live 30-second round.' }
+      { title: 'Module 4: Your First Cypher Round', desc: 'Putting the core foundation together in a live 30-second round.' }
     ],
     intensityScore: 78
   },
   {
     id: 'battle-psychology',
     courseNumber: '02',
-    title: 'BATTLE CIRCLE & CHARACTER BUILDING',
-    subtitle: 'Transforming Emotion into Beast Mode Persona',
+    title: 'BATTLE CIRCLE & CHARACTER',
+    subtitle: 'Presence, Mentality & Character Development',
     level: 'Intermediate',
     duration: '6 Weeks',
     sessions: '18 Deep Sessions',
     instructor: 'King Ragnar',
-    badge: 'POPULAR CHOICE',
-    price: '₹2,999',
-    description: 'Elevate beyond basic choreography into true battle psychology. Learn how to construct a commanding battle character, control the circle hype, and switch characters mid-round.',
+    badge: 'BATTLE MENTALITY',
+    price: '₹2,000',
+    description: 'Battle-circle fundamentals, character development, musicality, confidence, presence, rounds and battle mentality.',
     highlights: [
-      'Character Development & Beast Mode Persona',
-      'Cypher Ring Control & Spatial Dominance',
-      'Hype Generation & Crowds Reaction Read',
-      'Translating Anger & Passion into Clean Art'
+      'Character Development & Persona Building',
+      'Battle Circle Control & Confidence',
+      'Hype Generation & Presence Drills',
+      'Rounds Construction & Mental Toughness'
     ],
     modules: [
       { title: 'Module 1: The Persona Matrix', desc: 'Creating your unique Krump character and body language.' },
@@ -96,53 +99,55 @@ const COURSES_DATA: CourseItem[] = [
   {
     id: 'ragnar-masterclass',
     courseNumber: '03',
-    title: 'KING RAGNAR PRO BATTLE MASTERCLASS',
-    subtitle: 'Championship Round Building & Opponent Countering',
+    title: 'ADVANCED KRUMP',
+    subtitle: 'Performance Quality & Championship Round Building',
     level: 'Advanced',
-    duration: '3-Day Intensive',
-    sessions: 'Exclusive Workshop',
+    duration: 'Exclusive Workshop',
+    sessions: 'Masterclass Program',
     instructor: 'King Ragnar (Exclusive)',
-    badge: 'LIMITED SLOTS',
-    price: '₹4,499',
-    description: 'Reserved for advanced battlers aiming for national championship trophies. King Ragnar breaks down round structure, stamina preservation, opponent reading, floorwork transitions, and counter-moves.',
+    badge: 'ADVANCED LEVEL',
+    price: '₹4,000',
+    description: 'Advanced movement, character, musicality, performance quality, battle development and individual style.',
     highlights: [
-      'Structure of a Winning 3-Round Battle',
-      'Micro-Pops, Glitches, and Floorwork Integration',
-      'Opponent Countering & Musicality Locks',
-      'Direct 1-on-1 Mentorship & Video Analysis'
+      'Advanced Movement & Individual Style Development',
+      'Championship Round Building & Performance Quality',
+      'Micro-Pops, Glitches, and Complex Isolations',
+      'Opponent Countering & Battle Development'
     ],
     modules: [
       { title: 'Day 1: Round Architecture', desc: 'Opening statement, escalation, and killer round finishes.' },
-      { title: 'Day 2: Advanced Floorwork & Glitch', desc: 'Level switches, ground spins, and complex isolation.' },
-      { title: 'Day 3: Championship Mock Arena', desc: 'Full battle simulation judged by King Ragnar.' }
+      { title: 'Day 2: Advanced Isolations & Glitch', desc: 'Level switches, ground spins, and complex concept locks.' },
+      { title: 'Day 3: Championship Arena', desc: 'Full battle simulation judged by King Ragnar.' }
     ],
     intensityScore: 98
   },
   {
-    id: 'lab-freestyle',
+    id: 'all-levels-pass',
     courseNumber: '04',
-    title: 'LABBING, FREESTYLE & SUB-BASS MUSICALITY',
-    subtitle: 'Unlock Infinite Concept Creation & Musical Isolations',
+    title: 'ALL LEVELS',
+    subtitle: 'Complete Master Bundle Pass — Foundation to Championship',
     level: 'All Levels',
-    duration: '8 Weeks',
-    sessions: '24 Practice Drills',
-    instructor: 'Senior Kranti Instructors',
-    badge: 'CREATIVE HUB',
-    price: '₹2,499',
-    description: 'Discover how to lab new concepts independently. Train your ears to catch subtle sub-bass hits, polyrhythms, and complex beat drops while generating infinite original moves.',
+    duration: 'Full Access',
+    sessions: 'All Curriculum Modules',
+    instructor: 'King Ragnar & Senior Instructors',
+    badge: 'SPECIAL DISCOUNT OFFER',
+    price: '₹3,500',
+    originalPrice: '₹7,500',
+    isDiscounted: true,
+    description: 'Complete All-In-One Master Pass. Access all levels at a special discounted offer of ₹3,500 compared to taking the courses separately (Save ₹4,000).',
     highlights: [
-      'Systematic Labbing Methods & Drill Structures',
-      'Sub-Bass Isolation & Micro-Rhythmic Locks',
-      'Concept Creation: Mirrors, Liquids, & Metals',
-      'Overcoming Creative Blocks in Freestyle'
+      'Includes Beginner, Intermediate & Advanced Modules',
+      'Special Bundle Savings (Save ₹4,000)',
+      'Complete Labbing, Battle & Musicality Drills',
+      'Full Access Pass to All Masterclasses'
     ],
     modules: [
-      { title: 'Module 1: Ear Training for Battlers', desc: 'Hearing instrumentals beyond the basic snare.' },
-      { title: 'Module 2: The Labbing Formula', desc: 'How to create 5 new moves from 1 base concept.' },
-      { title: 'Module 3: Concept Fusion', desc: 'Blending Krump with animation, popping, and tutting.' },
-      { title: 'Module 4: Infinite Freestyle Engine', desc: 'Flowing for 2 minutes straight without repeating.' }
+      { title: 'Section 1: Foundations 101', desc: 'Core stances, jabs, stomps, and chest pops.' },
+      { title: 'Section 2: Battle Circle & Character', desc: 'Character development, ring presence, and battle mentality.' },
+      { title: 'Section 3: Advanced Movement', desc: 'Individual style, performance quality, and championship round structure.' },
+      { title: 'Section 4: Masterclass Access', desc: 'Exclusive feedback sessions with King Ragnar.' }
     ],
-    intensityScore: 84
+    intensityScore: 95
   }
 ];
 
@@ -343,16 +348,23 @@ export const CoursesSection: React.FC<CoursesSectionProps> = ({ onOpenTickets })
 
                     <div className="flex items-center gap-4">
                       <div className="text-right">
-                        <span className="block font-bebas text-2xl text-yellow-400 leading-none">{course.price}</span>
-                        <span className="block text-[10px] font-montserrat font-bold text-zinc-500 uppercase">FULL COURSE ACCESS</span>
+                        {course.originalPrice && (
+                          <span className="block font-montserrat font-bold text-xs text-zinc-500 line-through">
+                            {course.originalPrice}
+                          </span>
+                        )}
+                        <span className="block font-bebas text-3xl text-yellow-400 leading-none">{course.price}</span>
+                        <span className="block text-[10px] font-montserrat font-bold text-yellow-500/90 uppercase">
+                          {course.isDiscounted ? 'SPECIAL DISCOUNT OFFER' : 'FULL COURSE ACCESS'}
+                        </span>
                       </div>
 
                       <button
-                        onClick={onOpenTickets}
-                        className="px-6 py-3 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-black font-montserrat font-extrabold text-xs tracking-widest uppercase transition-all duration-300 shadow-lg shadow-yellow-500/20 hover:scale-105 active:scale-95 flex items-center gap-2 cursor-pointer"
+                        onClick={(e) => e.preventDefault()}
+                        className="px-6 py-3 rounded-xl bg-zinc-900 text-yellow-400 border border-yellow-500/40 font-montserrat font-extrabold text-xs tracking-widest uppercase transition-all duration-300 hover:bg-yellow-500 hover:text-black shadow-lg shadow-yellow-500/10 flex items-center gap-2 cursor-pointer"
                       >
-                        <span>ENROLL NOW</span>
-                        <ArrowUpRight className="w-4 h-4" />
+                        <span>ENROLLMENT LOCKED</span>
+                        <Lock className="w-4 h-4" />
                       </button>
                     </div>
                   </div>

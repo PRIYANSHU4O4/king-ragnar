@@ -27,29 +27,32 @@ interface ContactSectionProps {
 
 const FAQ_ITEMS = [
   {
-    q: "How do I register for the 1v1 Krump Battle Championship?",
-    a: "You can click on the 'Get Tickets' or 'Battle Passes' button across the app to reserve your battle pass. On-spot registration will also be open at Asansol Indoor Sports Arena at 09:00 AM on event day."
+    q: "How can I register for a class from Ragnar?",
+    a: "To register for a class with Ragnar, contact him directly through the contact section of the website. Share your full name, phone number, and the course you are interested in, and Ragnar will guide you through the registration process."
   },
   {
-    q: "Can beginners participate in the King Ragnar Masterclass?",
-    a: "Yes! Krump Foundations 101 and the Open Masterclass are structured for all skill levels. Dancers stepping into Krump for the first time will receive dedicated fundamental drills."
+    q: "Can a beginner start Krump from scratch without any prior knowledge?",
+    a: "Absolutely. You do not need any previous Krump experience to start. Beginners can start with Krump Foundation 101, where the fundamentals, basic movements, musicality, character, and core concepts of Krump are taught step by step."
+  },
+  {
+    q: "Where can I learn about Krump and how can I get started?",
+    a: "You can explore the King Ragnar website to learn about Krump, its culture, movement, music, and training. If you are completely new, start with the Beginner course — Krump Foundation 101 — and build your foundation step by step under proper guidance."
   },
   {
     q: "Where is the main venue located in Asansol?",
-    a: "Asansol Indoor Sports Arena, West Bengal 713301. It is conveniently located 10 minutes from Asansol Junction Railway Station."
+    a: "Indoor Stadium, Asansol (Near Galaxy Mall). Event Date: 16 August 2026 at 11:00 AM. Contact Hotline: 7718784906."
   },
   {
     q: "How can producers submit music for future AKK volumes?",
-    a: "Head over to our Music Vault section above and click 'Upload Your Beat'. You can also email your MP3/WAV links to kranti.sound@asansolkrump.com."
+    a: "Head over to our Music Vault section above. You can also contact us directly at 7718784906 for music features."
   }
 ];
 
 export const ContactSection: React.FC<ContactSectionProps> = ({ onOpenTickets }) => {
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
     phone: '',
-    subject: 'Battle Registration Inquiry',
+    enquiry: '',
     message: ''
   });
 
@@ -59,7 +62,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onOpenTickets })
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.message) return;
+    if (!formData.name || !formData.phone || !formData.message) return;
 
     setIsSubmitting(true);
     setTimeout(() => {
@@ -67,9 +70,8 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onOpenTickets })
       setIsSubmitted(true);
       setFormData({
         name: '',
-        email: '',
         phone: '',
-        subject: 'Battle Registration Inquiry',
+        enquiry: '',
         message: ''
       });
     }, 1200);
@@ -128,7 +130,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onOpenTickets })
                 <span>DIRECT MESSAGING</span>
               </span>
               <h3 className="font-bebas text-4xl sm:text-5xl text-white uppercase tracking-tight">
-                SEND A MESSAGE TO THE ARENA
+                SEND A MESSAGE TO RAGNAR
               </h3>
             </div>
 
@@ -164,78 +166,58 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onOpenTickets })
                     <input 
                       type="text"
                       required
-                      placeholder="e.g. King Buck"
+                      placeholder="e.g. Pranjal Bharti"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       className="w-full p-4 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder-zinc-600 text-xs font-montserrat focus:outline-none focus:border-yellow-500 transition-colors"
                     />
                   </div>
 
-                  {/* Email */}
+                  {/* Phone Number */}
                   <div className="space-y-2">
                     <label className="block text-xs font-montserrat font-bold text-zinc-300 uppercase tracking-wider">
-                      EMAIL ADDRESS *
-                    </label>
-                    <input 
-                      type="email"
-                      required
-                      placeholder="e.g. battler@krump.com"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full p-4 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder-zinc-600 text-xs font-montserrat focus:outline-none focus:border-yellow-500 transition-colors"
-                    />
-                  </div>
-
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  
-                  {/* Phone / WhatsApp */}
-                  <div className="space-y-2">
-                    <label className="block text-xs font-montserrat font-bold text-zinc-300 uppercase tracking-wider">
-                      PHONE / WHATSAPP (OPTIONAL)
+                      PHONE NUMBER *
                     </label>
                     <input 
                       type="tel"
-                      placeholder="+91 98765 43210"
+                      required
+                      placeholder="e.g. 7718784906"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       className="w-full p-4 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder-zinc-600 text-xs font-montserrat focus:outline-none focus:border-yellow-500 transition-colors"
                     />
                   </div>
 
-                  {/* Subject Dropdown */}
-                  <div className="space-y-2">
-                    <label className="block text-xs font-montserrat font-bold text-zinc-300 uppercase tracking-wider">
-                      INQUIRY SUBJECT
-                    </label>
-                    <select
-                      value={formData.subject}
-                      onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                      className="w-full p-4 rounded-xl bg-zinc-900 border border-zinc-800 text-white text-xs font-montserrat focus:outline-none focus:border-yellow-500 transition-colors cursor-pointer"
-                    >
-                      <option value="Battle Registration Inquiry">1v1 Battle Registration</option>
-                      <option value="King Ragnar Workshop Pass">Masterclass & Workshop Pass</option>
-                      <option value="Sponsorship & Media">Sponsorship & Press Media</option>
-                      <option value="Music Submission">Music Beats Submission</option>
-                      <option value="General Query">General Inquiry</option>
-                    </select>
-                  </div>
-
                 </div>
 
-                {/* Message */}
+                {/* What is your enquiry? */}
                 <div className="space-y-2">
                   <label className="block text-xs font-montserrat font-bold text-zinc-300 uppercase tracking-wider">
-                    YOUR MESSAGE *
+                    WHAT IS YOUR ENQUIRY? *
+                  </label>
+                  <input 
+                    type="text"
+                    required
+                    placeholder="Briefly state your enquiry (e.g. Workshop Details, Battle Registration, Music Vault, etc.)"
+                    value={formData.enquiry}
+                    onChange={(e) => setFormData({ ...formData, enquiry: e.target.value })}
+                    className="w-full p-4 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder-zinc-600 text-xs font-montserrat focus:outline-none focus:border-yellow-500 transition-colors"
+                  />
+                </div>
+
+                {/* Message / Describe your problem */}
+                <div className="space-y-2">
+                  <label className="block text-xs font-montserrat font-bold text-zinc-300 uppercase tracking-wider">
+                    MESSAGE / DESCRIBE YOUR PROBLEM *
                   </label>
                   <textarea 
-                    rows={5}
+                    rows={6}
+                    maxLength={10000000}
                     required
-                    placeholder="Type your message, battle questions, or event inquiries..."
+                    placeholder="Type your message or describe your problem in complete detail..."
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    className="w-full p-4 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder-zinc-600 text-xs font-montserrat focus:outline-none focus:border-yellow-500 transition-colors"
+                    className="w-full p-4 rounded-xl bg-zinc-900 border border-zinc-800 text-white placeholder-zinc-600 text-xs font-montserrat focus:outline-none focus:border-yellow-500 transition-colors resize-y min-h-[140px]"
                   />
                 </div>
 
@@ -281,28 +263,25 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onOpenTickets })
 
               <div className="space-y-4 text-xs font-montserrat text-zinc-300">
                 <div className="space-y-1">
-                  <span className="font-bold text-white block uppercase">Venue Name & Address:</span>
-                  <p className="text-zinc-400">Asansol Indoor Sports Arena, Near GT Road, West Bengal 713301</p>
+                  <span className="font-bold text-white block uppercase">VENUE:</span>
+                  <p className="text-zinc-400 font-medium">Indoor Stadium, Asansol<br />Near Galaxy Mall</p>
                 </div>
 
                 <div className="space-y-1">
-                  <span className="font-bold text-white block uppercase">Event Date & Timings:</span>
-                  <p className="text-zinc-400">Saturday, 24th October 2026 • Gates Open at 09:00 AM</p>
+                  <span className="font-bold text-white block uppercase">EVENT DATE:</span>
+                  <p className="text-zinc-400 font-medium">16 August 2026</p>
                 </div>
 
                 <div className="space-y-1">
-                  <span className="font-bold text-white block uppercase">Contact Hotline:</span>
-                  <p className="text-yellow-400 font-bold">+91 98765 43210 / +91 91234 56789</p>
+                  <span className="font-bold text-white block uppercase">EVENT START TIME:</span>
+                  <p className="text-zinc-400 font-medium">11:00 AM</p>
+                </div>
+
+                <div className="space-y-1">
+                  <span className="font-bold text-white block uppercase">CONTACT:</span>
+                  <p className="text-yellow-400 font-bold text-sm">7718784906</p>
                 </div>
               </div>
-
-              <button
-                onClick={onOpenTickets}
-                className="w-full py-3 rounded-xl bg-zinc-900 hover:bg-yellow-500 hover:text-black text-yellow-400 border border-yellow-500/40 font-montserrat font-extrabold text-xs uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2"
-              >
-                <span>BOOK CHAMPIONSHIP PASS</span>
-                <ArrowUpRight className="w-4 h-4" />
-              </button>
             </div>
 
             {/* Social & Connect Hub */}
@@ -313,9 +292,10 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onOpenTickets })
 
               <div className="space-y-4">
                 <a 
-                  href="https://instagram.com" 
+                  href="https://www.instagram.com/asansol_krump_kranti_/" 
                   target="_blank" 
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
+                  aria-label="Asansol Krump Kranti on Instagram"
                   className="p-4 rounded-2xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-yellow-500/50 flex items-center justify-between text-xs font-montserrat transition-all group"
                 >
                   <div className="flex items-center gap-3">
@@ -324,16 +304,17 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onOpenTickets })
                     </div>
                     <div>
                       <span className="font-bold text-white block">Instagram Handle</span>
-                      <span className="text-zinc-400">@asansolkrumpkranti</span>
+                      <span className="text-zinc-400">@asansol_krump_kranti_</span>
                     </div>
                   </div>
                   <ChevronDown className="w-4 h-4 text-zinc-500 -rotate-90 group-hover:text-yellow-400 transition-colors" />
                 </a>
 
                 <a 
-                  href="https://youtube.com" 
+                  href="https://youtube.com/@asansol_krump_kranti" 
                   target="_blank" 
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
+                  aria-label="Asansol Krump Kranti on YouTube"
                   className="p-4 rounded-2xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-yellow-500/50 flex items-center justify-between text-xs font-montserrat transition-all group"
                 >
                   <div className="flex items-center gap-3">
@@ -342,7 +323,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onOpenTickets })
                     </div>
                     <div>
                       <span className="font-bold text-white block">YouTube Channel</span>
-                      <span className="text-zinc-400">Asansol Krump Kranti Official</span>
+                      <span className="text-zinc-400">@asansol_krump_kranti</span>
                     </div>
                   </div>
                   <ChevronDown className="w-4 h-4 text-zinc-500 -rotate-90 group-hover:text-yellow-400 transition-colors" />
@@ -352,6 +333,96 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onOpenTickets })
 
           </motion.div>
 
+        </div>
+
+        {/* ---------------------------------------------------- */}
+        {/* DEDICATED SOCIAL MEDIA SECTION: FOLLOW THE MOVEMENT */}
+        {/* ---------------------------------------------------- */}
+        <div className="space-y-8 max-w-4xl mx-auto pt-8">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: false, amount: 0.3 }}
+            transition={{ duration: 0.6 }}
+            className="text-center space-y-3"
+          >
+            <span className="text-xs font-montserrat font-extrabold tracking-[0.25em] text-yellow-500 uppercase flex items-center justify-center gap-2">
+              <Sparkles className="w-4 h-4 text-yellow-500" />
+              <span>OFFICIAL SOCIAL MEDIA</span>
+            </span>
+
+            <h3 className="font-bebas text-5xl sm:text-6xl text-white uppercase tracking-tight">
+              FOLLOW THE <span className="text-yellow-400">MOVEMENT</span>
+            </h3>
+
+            <p className="text-zinc-400 text-xs sm:text-sm font-medium max-w-xl mx-auto font-montserrat">
+              Stay connected with the Asansol Krump Kranti movement.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {/* INSTAGRAM CARD */}
+            <motion.a
+              href="https://www.instagram.com/asansol_krump_kranti_/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Asansol Krump Kranti on Instagram"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false, amount: 0.2 }}
+              transition={{ duration: 0.5 }}
+              className="p-6 sm:p-8 rounded-3xl bg-zinc-950 border border-zinc-800/90 hover:border-yellow-500/50 hover:bg-zinc-900/60 shadow-xl transition-all duration-300 flex items-center justify-between gap-4 group cursor-pointer"
+            >
+              <div className="flex items-center gap-4">
+                <div className="p-4 rounded-2xl bg-gradient-to-tr from-yellow-500/20 via-pink-500/20 to-purple-500/20 text-pink-400 border border-pink-500/30 group-hover:scale-110 transition-transform">
+                  <Instagram className="w-8 h-8" />
+                </div>
+                <div className="space-y-1">
+                  <span className="font-bebas text-2xl text-white uppercase tracking-wider block group-hover:text-yellow-400 transition-colors">
+                    INSTAGRAM
+                  </span>
+                  <p className="text-xs font-montserrat font-bold text-zinc-400">
+                    Follow us on Instagram
+                  </p>
+                  <span className="text-[10px] font-mono text-yellow-500 font-semibold block">
+                    @asansol_krump_kranti_
+                  </span>
+                </div>
+              </div>
+              <ArrowUpRight className="w-5 h-5 text-zinc-500 group-hover:text-yellow-400 transition-colors shrink-0" />
+            </motion.a>
+
+            {/* YOUTUBE CARD */}
+            <motion.a
+              href="https://youtube.com/@asansol_krump_kranti"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Asansol Krump Kranti on YouTube"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false, amount: 0.2 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="p-6 sm:p-8 rounded-3xl bg-zinc-950 border border-zinc-800/90 hover:border-yellow-500/50 hover:bg-zinc-900/60 shadow-xl transition-all duration-300 flex items-center justify-between gap-4 group cursor-pointer"
+            >
+              <div className="flex items-center gap-4">
+                <div className="p-4 rounded-2xl bg-red-500/20 text-red-500 border border-red-500/30 group-hover:scale-110 transition-transform">
+                  <Youtube className="w-8 h-8" />
+                </div>
+                <div className="space-y-1">
+                  <span className="font-bebas text-2xl text-white uppercase tracking-wider block group-hover:text-yellow-400 transition-colors">
+                    YOUTUBE
+                  </span>
+                  <p className="text-xs font-montserrat font-bold text-zinc-400">
+                    Subscribe on YouTube
+                  </p>
+                  <span className="text-[10px] font-mono text-yellow-500 font-semibold block">
+                    @asansol_krump_kranti
+                  </span>
+                </div>
+              </div>
+              <ArrowUpRight className="w-5 h-5 text-zinc-500 group-hover:text-yellow-400 transition-colors shrink-0" />
+            </motion.a>
+          </div>
         </div>
 
         {/* ---------------------------------------------------- */}

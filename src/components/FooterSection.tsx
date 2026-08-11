@@ -26,24 +26,42 @@ interface FooterSectionProps {
 export const FooterSection: React.FC<FooterSectionProps> = ({ onOpenTickets }) => {
   const [email, setEmail] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
-  const [currentTime, setCurrentTime] = useState<string>('');
+  const [countdown, setCountdown] = useState({
+    formatted: '00D : 00H : 00M : 00S',
+    isLive: false
+  });
 
-  // Live Asansol IST Time clock
+  // Target event start time: 16 August 2026 at 11:00 AM IST (Asia/Kolkata UTC+05:30)
   useEffect(() => {
-    const updateClock = () => {
-      const now = new Date();
-      const timeStr = now.toLocaleTimeString('en-US', {
-        timeZone: 'Asia/Kolkata',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: true
+    const EVENT_TARGET_MS = new Date('2026-08-16T11:00:00+05:30').getTime();
+
+    const updateCountdown = () => {
+      const now = Date.now();
+      const diff = EVENT_TARGET_MS - now;
+
+      if (diff <= 0) {
+        setCountdown({
+          formatted: '00D : 00H : 00M : 00S',
+          isLive: true
+        });
+        return;
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
+      const pad = (num: number) => String(num).padStart(2, '0');
+
+      setCountdown({
+        formatted: `${pad(days)}D : ${pad(hours)}H : ${pad(minutes)}M : ${pad(seconds)}S`,
+        isLive: false
       });
-      setCurrentTime(timeStr);
     };
 
-    updateClock();
-    const timer = setInterval(updateClock, 1000);
+    updateCountdown();
+    const timer = setInterval(updateCountdown, 1000);
     return () => clearInterval(timer);
   }, []);
 
@@ -140,12 +158,12 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ onOpenTickets }) =
                   <MapPin className="w-4 h-4 text-yellow-400" />
                   <span>ASANSOL ARENA TIME (IST)</span>
                 </span>
-                <span className="text-yellow-400 font-mono">{currentTime || '10:30 PM'}</span>
+                <span className="text-yellow-400 font-mono tracking-wider">{countdown.formatted}</span>
               </div>
 
               <div className="flex items-center gap-2 text-[11px] font-montserrat text-emerald-400 font-bold">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                <span>CHAMPIONSHIP REGISTRATIONS OPEN</span>
+                <span>{countdown.isLive ? 'CHAMPIONSHIP IS LIVE' : 'CHAMPIONSHIP REGISTRATIONS OPEN'}</span>
               </div>
             </div>
           </div>
@@ -187,9 +205,10 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ onOpenTickets }) =
 
             <div className="space-y-3">
               <a 
-                href="https://instagram.com" 
+                href="https://www.instagram.com/asansol_krump_kranti_/" 
                 target="_blank" 
-                rel="noreferrer"
+                rel="noopener noreferrer"
+                aria-label="Asansol Krump Kranti on Instagram"
                 className="flex items-center gap-3 p-3 rounded-xl bg-zinc-950 border border-zinc-800 hover:border-yellow-500/50 hover:bg-zinc-900 text-xs font-montserrat font-bold text-zinc-300 hover:text-white transition-all group"
               >
                 <Instagram className="w-4 h-4 text-pink-400 group-hover:scale-110 transition-transform" />
@@ -197,9 +216,10 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ onOpenTickets }) =
               </a>
 
               <a 
-                href="https://youtube.com" 
+                href="https://youtube.com/@asansol_krump_kranti" 
                 target="_blank" 
-                rel="noreferrer"
+                rel="noopener noreferrer"
+                aria-label="Asansol Krump Kranti on YouTube"
                 className="flex items-center gap-3 p-3 rounded-xl bg-zinc-950 border border-zinc-800 hover:border-yellow-500/50 hover:bg-zinc-900 text-xs font-montserrat font-bold text-zinc-300 hover:text-white transition-all group"
               >
                 <Youtube className="w-4 h-4 text-red-500 group-hover:scale-110 transition-transform" />
@@ -272,13 +292,33 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ onOpenTickets }) =
               © 2026 Asansol Krump Kranti. All rights reserved. Crafted for <strong className="text-zinc-300">King Ragnar</strong>.
             </p>
 
-            <button
-              onClick={scrollToTop}
-              className="px-5 py-2.5 rounded-full bg-zinc-950 hover:bg-yellow-500 hover:text-black border border-zinc-800 hover:border-yellow-400 text-yellow-400 font-montserrat font-bold text-xs uppercase tracking-wider transition-all duration-300 flex items-center gap-2 cursor-pointer shadow-lg"
-            >
-              <span>BACK TO TOP</span>
-              <ArrowUp className="w-4 h-4" />
-            </button>
+            <div className="flex items-center gap-3">
+              <a
+                href="https://www.instagram.com/asansol_krump_kranti_/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Asansol Krump Kranti on Instagram"
+                className="p-2.5 rounded-full bg-zinc-950 hover:bg-yellow-500 hover:text-black border border-zinc-800 hover:border-yellow-400 text-zinc-400 transition-all cursor-pointer"
+              >
+                <Instagram className="w-4 h-4" />
+              </a>
+              <a
+                href="https://youtube.com/@asansol_krump_kranti"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Asansol Krump Kranti on YouTube"
+                className="p-2.5 rounded-full bg-zinc-950 hover:bg-yellow-500 hover:text-black border border-zinc-800 hover:border-yellow-400 text-zinc-400 transition-all cursor-pointer"
+              >
+                <Youtube className="w-4 h-4" />
+              </a>
+              <button
+                onClick={scrollToTop}
+                className="px-5 py-2.5 rounded-full bg-zinc-950 hover:bg-yellow-500 hover:text-black border border-zinc-800 hover:border-yellow-400 text-yellow-400 font-montserrat font-bold text-xs uppercase tracking-wider transition-all duration-300 flex items-center gap-2 cursor-pointer shadow-lg"
+              >
+                <span>BACK TO TOP</span>
+                <ArrowUp className="w-4 h-4" />
+              </button>
+            </div>
 
           </div>
 

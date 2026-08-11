@@ -8,8 +8,8 @@ export const DEFAULT_BANNER_CONFIG: BannerConfig = {
   bgVignette: false,
   showTextOverlays: false,
   
-  leftTitleLine1: "HI,I",
-  leftTitleLine2: "'M",
+  leftTitleLine1: "HI,",
+  leftTitleLine2: "I'M",
   leftTagline1: "RAW ENERGY.",
   leftTagline2: "REAL MOVEMENT.",
   leftTagline3: "NO LIMITS.",

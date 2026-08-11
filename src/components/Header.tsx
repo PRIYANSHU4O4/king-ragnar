@@ -29,7 +29,7 @@ export const Header: React.FC<HeaderProps> = ({
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-black shadow-2xl">
+    <header className="fixed top-0 left-0 z-50 w-full bg-black/90 backdrop-blur-md shadow-2xl">
       <div className="max-w-[1700px] mx-auto px-4 sm:px-8 lg:px-12 h-16 sm:h-20 flex items-center justify-between">
         
         {/* Brand / Logo - Left Aligned */}

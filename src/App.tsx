@@ -13,6 +13,7 @@ import { FooterSection } from './components/FooterSection';
 import { BannerCustomizer } from './components/BannerCustomizer';
 import { TicketModal } from './components/TicketModal';
 import { PageSections } from './components/PageSections';
+import { StickyEventBar } from './components/StickyEventBar';
 import { krumpBeatPlayer } from './utils/audioBeat';
 
 export default function App() {
@@ -22,9 +23,15 @@ export default function App() {
   const [isTicketModalOpen, setIsTicketModalOpen] = useState<boolean>(false);
   const [isPlayingMusic, setIsPlayingMusic] = useState<boolean>(false);
 
+  React.useEffect(() => {
+    const unsubscribe = krumpBeatPlayer.subscribe((playing) => {
+      setIsPlayingMusic(playing);
+    });
+    return unsubscribe;
+  }, []);
+
   const handleToggleMusic = () => {
-    const isNowPlaying = krumpBeatPlayer.toggle();
-    setIsPlayingMusic(isNowPlaying);
+    krumpBeatPlayer.toggle();
   };
 
   const handleTabChange = (tab: NavTab) => {
@@ -52,6 +59,10 @@ export default function App() {
     }
   };
 
+  const handleOpenTicketLink = () => {
+    window.open('https://akk19.lovable.app/tickets', '_blank', 'noopener,noreferrer');
+  };
+
   return (
     <div className="min-h-screen bg-black text-white flex flex-col font-montserrat antialiased selection:bg-yellow-500 selection:text-black">
       
@@ -60,7 +71,7 @@ export default function App() {
         activeTab={activeTab}
         onTabChange={handleTabChange}
         onOpenCustomizer={() => setIsCustomizerOpen(true)}
-        onOpenTickets={() => setIsTicketModalOpen(true)}
+        onOpenTickets={handleOpenTicketLink}
         eventTitle={config.eventTitle}
         eventVol={config.eventVol}
         isPlayingMusic={isPlayingMusic}
@@ -73,14 +84,14 @@ export default function App() {
 
         {/* Interactive About Section below the banner */}
         <AboutSection 
-          onOpenTickets={() => setIsTicketModalOpen(true)}
+          onOpenTickets={handleOpenTicketLink}
           isPlayingMusic={isPlayingMusic}
           onToggleMusic={handleToggleMusic}
         />
 
         {/* Interactive Courses Section with scroll animations */}
         <CoursesSection 
-          onOpenTickets={() => setIsTicketModalOpen(true)}
+          onOpenTickets={handleOpenTicketLink}
         />
 
         {/* Interactive Music Section with scroll reveal & Web Audio player */}
@@ -97,12 +108,12 @@ export default function App() {
 
         {/* Interactive Contact & Location Arena with Scroll Animations */}
         <ContactSection 
-          onOpenTickets={() => setIsTicketModalOpen(true)}
+          onOpenTickets={handleOpenTicketLink}
         />
 
         {/* Interactive Footer Section */}
         <FooterSection 
-          onOpenTickets={() => setIsTicketModalOpen(true)}
+          onOpenTickets={handleOpenTicketLink}
         />
       </main>
 
@@ -118,6 +129,9 @@ export default function App() {
         isOpen={isTicketModalOpen}
         onClose={() => setIsTicketModalOpen(false)}
       />
+
+      {/* Permanently Sticky Live Event Countdown Bar */}
+      <StickyEventBar />
 
     </div>
   );

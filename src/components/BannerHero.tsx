@@ -222,7 +222,7 @@ export const BannerHero: React.FC<BannerHeroProps> = () => {
   }, []);
 
   return (
-    <section ref={containerRef} className="relative w-full h-[450vh] bg-black">
+    <section ref={containerRef} className="relative w-full h-[200vh] bg-black">
       {/* Sticky Inner Viewport Container */}
       <div className="sticky top-0 w-full h-screen overflow-hidden bg-black flex items-center justify-center">
         
@@ -239,7 +239,7 @@ export const BannerHero: React.FC<BannerHeroProps> = () => {
             {/* LEFT ZONE: HI, I'M Section */}
             <div className="hero-left">
               <div className="grunge-title left-title">
-                <span className="line">HI, I</span>
+                <span className="line">HI,</span>
                 <span className="line">I'M</span>
               </div>
 

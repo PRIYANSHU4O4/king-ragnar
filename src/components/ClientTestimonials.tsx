@@ -1,17 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
+import React from 'react';
+import { motion } from 'motion/react';
 import { 
   Quote, 
-  ArrowUpRight, 
   Sparkles, 
-  Award, 
-  Star, 
-  CheckCircle2, 
-  Crown, 
-  Flame, 
-  ChevronDown, 
-  ChevronUp,
-  Volume2
+  Award
 } from 'lucide-react';
 
 export interface TestimonialCard {
@@ -117,31 +109,8 @@ const TESTIMONIALS_DATA: TestimonialCard[] = [
 ];
 
 export const ClientTestimonials: React.FC = () => {
-  const [activeIndex, setActiveIndex] = useState<number>(0);
-  const containerRef = useRef<HTMLDivElement | null>(null);
-
-  // Track section scroll progress to drive card activation as user scrolls
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start center", "end center"]
-  });
-
-  useEffect(() => {
-    const unsubscribe = scrollYProgress.on("change", (latest) => {
-      // Map 0 -> 1 progress smoothly across the 5 cards
-      const step = 1 / TESTIMONIALS_DATA.length;
-      const targetIndex = Math.min(
-        TESTIMONIALS_DATA.length - 1,
-        Math.max(0, Math.floor(latest / step))
-      );
-      setActiveIndex(targetIndex);
-    });
-    return () => unsubscribe();
-  }, [scrollYProgress]);
-
   return (
     <section 
-      ref={containerRef}
       id="testimonials" 
       className="w-full bg-black text-white py-24 px-4 sm:px-8 lg:px-16 border-t border-zinc-900 relative"
     >
@@ -172,147 +141,40 @@ export const ClientTestimonials: React.FC = () => {
         </motion.div>
 
         {/* ---------------------------------------------------- */}
-        {/* STACKED HORIZONTAL TESTIMONIAL CARDS */}
+        {/* COMING SOON TESTIMONIALS CARD (POST-EVENT STATE) */}
         {/* ---------------------------------------------------- */}
-        <div className="space-y-4 max-w-6xl mx-auto">
-          {TESTIMONIALS_DATA.map((card, index) => {
-            const isActive = activeIndex === index;
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false, amount: 0.3 }}
+          transition={{ duration: 0.7 }}
+          className="max-w-4xl mx-auto p-10 sm:p-16 rounded-3xl bg-zinc-950 border border-yellow-500/40 shadow-2xl shadow-yellow-500/10 text-center space-y-6 relative overflow-hidden"
+        >
+          <div className="absolute top-0 right-0 w-80 h-80 bg-yellow-500/5 rounded-full blur-3xl pointer-events-none" />
 
-            return (
-              <motion.div
-                key={card.id}
-                layout
-                onClick={() => setActiveIndex(index)}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, amount: 0.2 }}
-                transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1] }}
-                className={`group rounded-3xl border transition-all duration-500 overflow-hidden cursor-pointer ${
-                  isActive
-                    ? 'bg-zinc-950 border-yellow-500 shadow-2xl shadow-yellow-500/20'
-                    : 'bg-zinc-950/80 border-zinc-800/80 hover:border-yellow-500/50 hover:bg-zinc-900/60 opacity-80 hover:opacity-100'
-                }`}
-              >
-                {/* CARD COMPACT HEADER ROW (ALWAYS VISIBLE) */}
-                <div className="p-6 sm:p-8 flex items-center justify-between gap-4 select-none">
-                  
-                  <div className="flex items-center gap-4 sm:gap-8">
-                    {/* Number */}
-                    <span className={`font-bebas text-4xl sm:text-6xl transition-colors ${
-                      isActive ? 'text-yellow-400 font-extrabold' : 'text-zinc-600 group-hover:text-yellow-500'
-                    }`}>
-                      {card.number}
-                    </span>
+          <div className="w-16 h-16 rounded-2xl bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 flex items-center justify-center mx-auto shadow-lg shadow-yellow-500/10">
+            <Sparkles className="w-8 h-8" />
+          </div>
 
-                    {/* Title & Category */}
-                    <div>
-                      <h3 className={`font-bebas text-2xl sm:text-4xl uppercase tracking-wide transition-colors ${
-                        isActive ? 'text-white' : 'text-zinc-300 group-hover:text-white'
-                      }`}>
-                        {card.clientName}
-                      </h3>
-                      <p className="text-xs font-montserrat font-semibold text-zinc-400 uppercase tracking-wider">
-                        {card.category}
-                      </p>
-                    </div>
-                  </div>
+          <div className="space-y-3">
+            <span className="px-4 py-1.5 rounded-full bg-yellow-500/15 text-yellow-400 font-montserrat font-extrabold text-xs tracking-widest uppercase border border-yellow-500/30">
+              POST-EVENT REVIEWS &amp; TESTIMONIALS
+            </span>
 
-                  {/* Badge & Toggle Indicator */}
-                  <div className="flex items-center gap-4">
-                    <span className={`hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-montserrat font-extrabold tracking-wider uppercase border transition-all ${
-                      isActive 
-                        ? 'bg-yellow-500 text-black border-yellow-400 shadow-lg shadow-yellow-500/30' 
-                        : 'bg-zinc-900 text-yellow-400 border-zinc-800 group-hover:border-yellow-500/40'
-                    }`}>
-                      <span>{card.badge}</span>
-                      <ArrowUpRight className="w-3.5 h-3.5" />
-                    </span>
+            <h3 className="font-bebas text-4xl sm:text-6xl text-white uppercase tracking-tight">
+              COMING <span className="text-yellow-400">SOON</span>
+            </h3>
 
-                    <div className={`p-2 rounded-full border transition-colors ${
-                      isActive ? 'bg-yellow-500 text-black border-yellow-400' : 'bg-zinc-900 text-zinc-500 border-zinc-800'
-                    }`}>
-                      {isActive ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
-                    </div>
-                  </div>
+            <p className="font-montserrat text-zinc-300 text-sm sm:text-base max-w-xl mx-auto leading-relaxed font-medium">
+              Official attendee feedback, battler testimonials, and event reviews will be published here following the conclusion of Asansol Krump Kranti Vol. 1.
+            </p>
+          </div>
 
-                </div>
-
-                {/* EXPANDED CONTENT AREA (ANIMATED ON ACTIVE) */}
-                <AnimatePresence initial={false}>
-                  {isActive && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
-                      className="border-t border-zinc-800/80"
-                    >
-                      <div className="p-6 sm:p-10 space-y-8 bg-gradient-to-b from-zinc-950 via-zinc-900/40 to-zinc-950">
-                        
-                        {/* Quote & Visual Image Grid */}
-                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                          
-                          {/* Image Visual Panel */}
-                          <div className="lg:col-span-5 relative rounded-2xl overflow-hidden h-64 sm:h-80 border border-zinc-800 group/img">
-                            <img 
-                              src={card.imageUrl} 
-                              alt={card.clientName} 
-                              className="w-full h-full object-cover transition-transform duration-700 group-hover/img:scale-105"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                            
-                            <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs font-montserrat font-bold text-yellow-400">
-                              <span className="flex items-center gap-1.5 bg-black/80 backdrop-blur-md px-3 py-1 rounded-full border border-yellow-500/30">
-                                <Crown className="w-3.5 h-3.5" />
-                                <span>VERIFIED RECOGNITION</span>
-                              </span>
-                            </div>
-                          </div>
-
-                          {/* Testimonial Quote Panel */}
-                          <div className="lg:col-span-7 space-y-6">
-                            <Quote className="w-10 h-10 text-yellow-500/40" />
-
-                            <p className="font-montserrat text-base sm:text-xl text-zinc-100 font-medium leading-relaxed italic">
-                              {card.quote}
-                            </p>
-
-                            <div className="border-l-2 border-yellow-500 pl-4 space-y-0.5">
-                              <h4 className="font-bebas text-2xl text-white tracking-wide uppercase">{card.author}</h4>
-                              <p className="text-xs font-montserrat font-bold text-yellow-400 uppercase tracking-wider">{card.role}</p>
-                            </div>
-
-                            {/* Tags */}
-                            <div className="flex flex-wrap gap-2 pt-2">
-                              {card.tags.map((tag, idx) => (
-                                <span key={idx} className="px-3 py-1 rounded-lg bg-zinc-900 border border-zinc-800 text-[11px] font-montserrat font-semibold text-zinc-300">
-                                  #{tag}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-
-                        </div>
-
-                        {/* Stats Bar */}
-                        <div className="grid grid-cols-3 gap-4 pt-6 border-t border-zinc-800/80 text-center">
-                          {card.stats.map((stat, idx) => (
-                            <div key={idx} className="p-4 rounded-xl bg-zinc-900/80 border border-zinc-800">
-                              <span className="block font-bebas text-2xl sm:text-4xl text-yellow-400">{stat.value}</span>
-                              <span className="block text-[10px] font-montserrat font-bold text-zinc-400 uppercase tracking-wider">{stat.label}</span>
-                            </div>
-                          ))}
-                        </div>
-
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-              </motion.div>
-            );
-          })}
-        </div>
+          <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 font-montserrat text-xs font-semibold uppercase tracking-wider">
+            <Award className="w-4 h-4 text-yellow-400" />
+            <span>REVIEWS OPEN AFTER EVENT DAY • 16 AUGUST 2026</span>
+          </div>
+        </motion.div>
 
       </div>
     </section>

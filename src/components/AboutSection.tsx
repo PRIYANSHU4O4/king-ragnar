@@ -97,36 +97,76 @@ const KRUMP_PILLARS: KrumpPillar[] = [
 
 const TIMELINE_MILESTONES = [
   {
-    year: '2018',
-    title: 'THE SPARK IN ASANSOL',
-    subtitle: 'Underground Street Sessions',
-    description: 'King Ragnar initiates raw, unfiltered Krump practice circles on local concrete floors in Asansol, introducing the street movement to West Bengal.',
-    stats: 'First 12 Underground Battlers',
-    badge: 'GENESIS'
+    year: '2019',
+    title: 'KING RAGNAR / T-REX',
+    subtitle: 'T-Rex • Half Devil • Dæmon Kronos • AKA Twin🔱 • Bedseed',
+    description: 'In 2019, King Ragnar, also known as T-Rex, discovered Krump while he was in college. Through Krump, he discovered a new style within himself — a form of expression that helped him heal, exchange emotions, talk through movement, and understand himself in a completely different way.\n\nThat discovery became the beginning of his Krump journey.',
+    stats: 'Beginning of the Krump Journey',
+    badge: '2019'
   },
   {
-    year: '2021',
-    title: 'THE KRANTI MOVEMENT',
-    subtitle: 'Asansol Krump Kranti Vol. 1',
-    description: 'Launch of AKK Vol. 1 — bringing together dancers across Eastern India for intense 1v1 battle rounds, masterclasses, and street cyphers.',
-    stats: '150+ Attendees & Battlers',
-    badge: 'MILESTONE'
+    year: 'HEALING',
+    title: 'THE DISCOVERY',
+    subtitle: 'More Than Just Dance',
+    description: 'Krump became more than just a dance style for T-Rex. It became a form of healing, expression, communication, and personal growth.',
+    stats: 'Form of Healing & Growth',
+    badge: 'DISCOVERY'
   },
   {
-    year: '2024',
-    title: 'NATIONAL RECOGNITION',
-    subtitle: 'Judged & Represented',
-    description: 'King Ragnar has judged and represented in many places across the country, solidifying Asansol as a premier Krump hub.',
-    stats: 'Judged & Represented Nationwide',
-    badge: 'LEGACY'
+    year: 'ASANSOL',
+    title: 'SPREADING THE KNOWLEDGE',
+    subtitle: 'Growing the Local Movement',
+    description: 'After developing his understanding of Krump, T-Rex began sharing his knowledge with students in Asansol and started contributing to the growth of the local Krump movement.',
+    stats: 'Pioneering Asansol Krump',
+    badge: 'TEACHING'
   },
   {
-    year: '2026',
+    year: 'MENTOR',
+    title: 'STUDENTS / THE NEXT GENERATION',
+    subtitle: 'Immortal • Lil T-Rex • Junior T-Rex',
+    description: 'First generation under his guidance:\n• Immortal — also known as Pranjal Bharti\n• Lil T-Rex — also known as Bishal Roy\n• Junior T-Rex — also known as Rohit\n\nLater, T-Rex met Sanjana and Gautam, who eventually became his Lil Hommies.',
+    stats: 'First Gen & Lil Hommies',
+    badge: 'STUDENTS'
+  },
+  {
+    year: 'FOCUS',
+    title: 'THE KINGDOM CHAPTER',
+    subtitle: 'Dismissal & Movement Refocus',
+    description: 'After several years, T-Rex decided that the administrative rules and responsibilities of the Kingdom were not being followed properly by the family members.\n\nBecause of this, he dismissed the Kingdom chapter and shifted his focus toward taking care of and developing the Asansol Krump Movement.',
+    stats: 'Refocusing on the Movement',
+    badge: 'KINGDOM'
+  },
+  {
+    year: 'IDENTITY',
+    title: 'DÆMON KRONOS',
+    subtitle: 'Chosen by Lil Asura (Yadi Boy / Kronos)',
+    description: 'T-Rex was later chosen by Lil Asura, also known as Yadi Boy / Kronos. After this connection, the name "Dæmon Kronos" was given to T-Rex — marking an important chapter in his Krump identity and evolution.',
+    stats: 'Identity & Evolution',
+    badge: 'KRONOS'
+  },
+  {
+    year: 'EXPANSION',
+    title: 'DELHI & THE MOVEMENT',
+    subtitle: '3 Years Across Indian Scenes',
+    description: 'T-Rex later travelled to Delhi to experience and understand the Krump lifestyle and movement outside Asansol, including the wider UP and Delhi scene.\n\nOver approximately three years of experiencing movements across different states, he connected with artists from across India — deepening his understanding of different styles, cultures, approaches, and perspectives.',
+    stats: 'Connecting Across India',
+    badge: 'TRAVEL'
+  },
+  {
+    year: 'BRIDGES',
+    title: 'BUILDING CONNECTIONS',
+    subtitle: 'Uplifting New Dancers',
+    description: 'Through these connections, T-Rex worked toward creating opportunities and connections that could help uplift the Asansol Krump Movement and open doors for newer dancers and artists.',
+    stats: 'Opening Doors for Dancers',
+    badge: 'COMMUNITY'
+  },
+  {
+    year: 'AKK VOL. 1',
     title: 'ASANSOL KRUMP KRANTI VOL. 1',
-    subtitle: 'The Ultimate Kingdom Stage',
-    description: 'The return of the legendary championship featuring International Judges, Live Beat Synthesizer Battles, and Masterclass Workshops.',
-    stats: 'The Crown awaits the Champion',
-    badge: 'PRESENT'
+    subtitle: 'The Vision Realized',
+    description: 'Eventually, the idea of "ASANSOL KRUMP KRANTI VOL. 1" was initiated. This became the point where T-Rex envisioned planning one of the biggest Krump events in Asansol — bringing together Krump, Hip-Hop, Breaking and RYS and creating a platform for dancers, artists and the local movement.',
+    stats: 'Mega Movement Arena',
+    badge: 'VISION'
   }
 ];
 
@@ -153,7 +193,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
   };
 
   return (
-    <section id="about" className="w-full bg-black text-white py-20 px-4 sm:px-8 lg:px-16 overflow-hidden">
+    <section id="about" className="w-full bg-black text-white pt-8 pb-20 sm:pt-12 sm:pb-20 px-4 sm:px-8 lg:px-16 overflow-hidden">
       <div className="max-w-[1700px] mx-auto space-y-32">
         
         {/* SECTION HEADER */}
@@ -472,10 +512,10 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
             </span>
 
             <h3 className="font-bebas text-5xl sm:text-7xl text-white uppercase tracking-tight">
-              THE JOURNEY OF <span className="text-yellow-400">KRUMP KRANTI</span>
+              THE JOURNEY OF <span className="text-yellow-400">KING T-REX</span>
             </h3>
             <p className="text-zinc-400 text-xs sm:text-sm font-medium max-w-xl mx-auto">
-              From underground street cyphers to Eastern India&apos;s premier Krump battle stage.
+              The evolution of King Ragnar / T-Rex and the Asansol Krump Movement.
             </p>
           </motion.div>
 
@@ -569,13 +609,15 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 relative z-10 pt-2">
-            <button
-              onClick={onOpenTickets}
+            <a
+              href="https://akk19.lovable.app/tickets"
+              target="_blank"
+              rel="noopener noreferrer"
               className="w-full sm:w-auto px-8 py-4 rounded-full bg-yellow-500 hover:bg-yellow-400 text-black font-montserrat font-black text-sm tracking-[0.2em] uppercase transition-all duration-300 shadow-xl shadow-yellow-500/25 hover:scale-105 active:scale-95 flex items-center justify-center gap-3 cursor-pointer"
             >
               <span>GET BATTLE TICKETS</span>
               <ArrowUpRight className="w-5 h-5" />
-            </button>
+            </a>
 
             <button
               onClick={onToggleMusic}
