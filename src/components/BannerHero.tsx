@@ -14,54 +14,147 @@ function getFramePath(index: number): string {
   return `/first/ezgif-frame-${frameNum}.jpg`;
 }
 
+function checkIsMobile(): boolean {
+  if (typeof window === 'undefined') return false;
+  return /iPad|iPhone|iPod|Android/i.test(navigator.userAgent) || window.innerWidth <= 768;
+}
+
+class FrameCache {
+  private cache = new Map<number, HTMLImageElement>();
+  private accessOrder: number[] = [];
+  private maxCapacity: number;
+
+  constructor(maxCapacity: number) {
+    this.maxCapacity = maxCapacity;
+  }
+
+  public getMap(): Map<number, HTMLImageElement> {
+    return this.cache;
+  }
+
+  public getLoaded(index: number): HTMLImageElement | undefined {
+    const img = this.cache.get(index);
+    if (img && img.complete && img.naturalWidth > 0) {
+      this.touch(index);
+      return img;
+    }
+    return undefined;
+  }
+
+  public load(index: number, onLoaded?: () => void): HTMLImageElement {
+    let img = this.cache.get(index);
+    if (img) {
+      this.touch(index);
+      if (img.complete && img.naturalWidth > 0 && onLoaded) {
+        onLoaded();
+      }
+      return img;
+    }
+
+    // Evict oldest decoded image when capacity is reached
+    while (this.cache.size >= this.maxCapacity && this.accessOrder.length > 0) {
+      const oldest = this.accessOrder.shift();
+      if (oldest !== undefined) {
+        const evicted = this.cache.get(oldest);
+        if (evicted) {
+          evicted.onload = null;
+          evicted.onerror = null;
+          evicted.src = '';
+        }
+        this.cache.delete(oldest);
+      }
+    }
+
+    img = new Image();
+    let handled = false;
+    const handleLoad = () => {
+      if (handled) return;
+      handled = true;
+      if (onLoaded) onLoaded();
+    };
+
+    img.onload = () => {
+      if ('decode' in img!) {
+        img!.decode().then(handleLoad).catch(handleLoad);
+      } else {
+        handleLoad();
+      }
+    };
+    img.onerror = () => {
+      handleLoad();
+    };
+
+    img.src = getFramePath(index + 1);
+
+    this.cache.set(index, img);
+    this.accessOrder.push(index);
+
+    if (img.complete) {
+      handleLoad();
+    }
+
+    return img;
+  }
+
+  private touch(index: number) {
+    const idx = this.accessOrder.indexOf(index);
+    if (idx !== -1) {
+      this.accessOrder.splice(idx, 1);
+    }
+    this.accessOrder.push(index);
+  }
+
+  public clear() {
+    this.cache.forEach((img) => {
+      img.onload = null;
+      img.onerror = null;
+      img.src = '';
+    });
+    this.cache.clear();
+    this.accessOrder = [];
+  }
+}
+
 export const BannerHero: React.FC<BannerHeroProps> = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const framesRef = useRef<HTMLImageElement[]>([]);
+  const frameCacheRef = useRef<FrameCache | null>(null);
   const targetScrollFractionRef = useRef<number>(0);
   const currentScrollFractionRef = useRef<number>(0);
   const lastRenderedFrameRef = useRef<number>(-1);
   const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
-    // 1. Preload 177 frame images in background
-    const frames: HTMLImageElement[] = [];
-    for (let i = 1; i <= TOTAL_FRAMES; i++) {
-      const img = new Image();
+    const isMobile = checkIsMobile();
+    const maxCapacity = isMobile ? 12 : 30;
+    const frameCache = new FrameCache(maxCapacity);
+    frameCacheRef.current = frameCache;
 
-      let handled = false;
-      const onFrameLoad = () => {
-        if (handled) return;
-        handled = true;
-        if (i === 1 && lastRenderedFrameRef.current === -1) {
-          drawFrame(0, true);
+    // Controlled background HTTP disk pre-fetcher for raw JPEG files
+    const abortController = new AbortController();
+    async function prefetchFramesInBackground() {
+      const CONCURRENCY = isMobile ? 4 : 8;
+      let currentIndex = 1;
+      async function worker() {
+        while (currentIndex <= TOTAL_FRAMES && !abortController.signal.aborted) {
+          const i = currentIndex++;
+          try {
+            await fetch(getFramePath(i), {
+              signal: abortController.signal,
+              cache: 'force-cache',
+            });
+          } catch {
+            // Gracefully ignore abort or fetch errors
+          }
         }
-      };
-
-      img.onload = () => {
-        if ('decode' in img) {
-          img.decode().then(onFrameLoad).catch(onFrameLoad);
-        } else {
-          onFrameLoad();
-        }
-      };
-
-      img.onerror = () => {
-        onFrameLoad();
-      };
-
-      img.src = getFramePath(i);
-
-      if (img.complete) {
-        onFrameLoad();
       }
-
-      frames.push(img);
+      const workers = Array.from({ length: CONCURRENCY }, () => worker());
+      await Promise.all(workers);
     }
-    framesRef.current = frames;
+    prefetchFramesInBackground();
 
-    // 2. Draw Frame on Canvas with DPR scaling and Cover fit algorithm
+    // Draw frame on canvas with DPR scaling and cover-fit algorithm
     function drawFrame(frameIndex: number, forceRedraw = false) {
       const canvas = canvasRef.current;
       if (!canvas) return;
@@ -71,21 +164,22 @@ export const BannerHero: React.FC<BannerHeroProps> = () => {
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
-      let img = framesRef.current[frameIndex];
+      let img = frameCacheRef.current?.getLoaded(frameIndex);
 
-      // Fallback to nearest available loaded frame if current frame isn't ready
-      if (!img || !img.complete || img.naturalWidth === 0) {
-        for (let offset = 1; offset < TOTAL_FRAMES; offset++) {
-          const prev = framesRef.current[frameIndex - offset];
-          if (prev && prev.complete && prev.naturalWidth > 0) {
-            img = prev;
-            break;
-          }
-          const next = framesRef.current[frameIndex + offset];
-          if (next && next.complete && next.naturalWidth > 0) {
-            img = next;
-            break;
-          }
+      // Fallback to nearest loaded frame in cache if requested frame isn't decoded yet
+      if (!img) {
+        let minDiff = Infinity;
+        const cacheMap = frameCacheRef.current?.getMap();
+        if (cacheMap) {
+          cacheMap.forEach((cachedImg, idx) => {
+            if (cachedImg.complete && cachedImg.naturalWidth > 0) {
+              const diff = Math.abs(idx - frameIndex);
+              if (diff < minDiff) {
+                minDiff = diff;
+                img = cachedImg;
+              }
+            }
+          });
         }
       }
 
@@ -122,19 +216,50 @@ export const BannerHero: React.FC<BannerHeroProps> = () => {
       lastRenderedFrameRef.current = frameIndex;
     }
 
-    // 3. Resize Canvas according to viewport and Device Pixel Ratio (DPR)
+    // Preload sliding window of frames around active scroll index
+    function preloadWindow(currentIndex: number) {
+      if (!frameCacheRef.current) return;
+      const isMob = checkIsMobile();
+      const lookahead = isMob ? 4 : 8;
+      const lookback = isMob ? 2 : 4;
+
+      const start = Math.max(0, currentIndex - lookback);
+      const end = Math.min(TOTAL_FRAMES - 1, currentIndex + lookahead);
+
+      for (let i = start; i <= end; i++) {
+        frameCacheRef.current.load(i, () => {
+          const targetIndex = Math.min(
+            TOTAL_FRAMES - 1,
+            Math.max(0, Math.round(currentScrollFractionRef.current * (TOTAL_FRAMES - 1)))
+          );
+          if (i === targetIndex) {
+            drawFrame(i, true);
+          }
+        });
+      }
+    }
+
+    // Immediately load & draw initial frame (frame 0)
+    frameCache.load(0, () => {
+      drawFrame(0, true);
+    });
+
+    // Resize canvas according to viewport and Device Pixel Ratio (DPR)
     function resizeCanvas() {
       const canvas = canvasRef.current;
       if (!canvas) return;
 
-      const dpr = window.devicePixelRatio || 1;
+      const isMob = checkIsMobile();
+      const rawDpr = window.devicePixelRatio || 1;
+      const dpr = isMob ? Math.min(rawDpr, 1.75) : rawDpr;
+
       canvas.width = window.innerWidth * dpr;
       canvas.height = window.innerHeight * dpr;
 
       const ctx = canvas.getContext('2d');
       if (ctx) {
         ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = 'high';
+        ctx.imageSmoothingQuality = isMob ? 'medium' : 'high';
       }
 
       lastRenderedFrameRef.current = -1;
@@ -142,10 +267,11 @@ export const BannerHero: React.FC<BannerHeroProps> = () => {
         TOTAL_FRAMES - 1,
         Math.max(0, Math.round(currentScrollFractionRef.current * (TOTAL_FRAMES - 1)))
       );
+      preloadWindow(currentFrame);
       drawFrame(currentFrame, true);
     }
 
-    // 4. Update section-bound scroll fraction (strictly within BannerHero container)
+    // Update section-bound scroll fraction (strictly within BannerHero container)
     function updateSectionScrollProgress() {
       if (!containerRef.current) return;
 
@@ -157,13 +283,12 @@ export const BannerHero: React.FC<BannerHeroProps> = () => {
         return;
       }
 
-      // Calculate scrolled distance strictly inside BannerHero
       const scrolled = -rect.top;
       const fraction = Math.min(1, Math.max(0, scrolled / maxScrollDistance));
       targetScrollFractionRef.current = fraction;
     }
 
-    // 5. Initialize Lenis Smooth Scroll engine
+    // Initialize Lenis Smooth Scroll engine
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -176,7 +301,7 @@ export const BannerHero: React.FC<BannerHeroProps> = () => {
       updateSectionScrollProgress();
     });
 
-    // 6. Continuous Render Loop with RAF & LERP
+    // Continuous Render loop with RAF & LERP (Always schedules next RAF tick for Lenis)
     let animationFrameId: number;
 
     function renderLoop(time: number) {
@@ -199,6 +324,7 @@ export const BannerHero: React.FC<BannerHeroProps> = () => {
         Math.max(0, Math.round(rawIndex))
       );
 
+      preloadWindow(frameIndex);
       drawFrame(frameIndex);
 
       animationFrameId = requestAnimationFrame(renderLoop);
@@ -212,12 +338,14 @@ export const BannerHero: React.FC<BannerHeroProps> = () => {
     animationFrameId = requestAnimationFrame(renderLoop);
 
     return () => {
+      abortController.abort();
       window.removeEventListener('resize', resizeCanvas);
       window.removeEventListener('scroll', updateSectionScrollProgress);
       cancelAnimationFrame(animationFrameId);
       if (lenisRef.current) {
         lenisRef.current.destroy();
       }
+      frameCache.clear();
     };
   }, []);
 
