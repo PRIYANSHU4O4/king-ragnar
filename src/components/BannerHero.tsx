@@ -22,6 +22,7 @@ function checkIsMobile(): boolean {
 class FrameCache {
   private cache = new Map<number, HTMLImageElement>();
   private accessOrder: number[] = [];
+  private inFlightLoads = new Set<number>();
   private maxCapacity: number;
 
   constructor(maxCapacity: number) {
@@ -51,6 +52,11 @@ class FrameCache {
       return img;
     }
 
+    if (this.inFlightLoads.has(index)) {
+      return img || new Image();
+    }
+    this.inFlightLoads.add(index);
+
     // Evict oldest decoded image when capacity is reached
     while (this.cache.size >= this.maxCapacity && this.accessOrder.length > 0) {
       const oldest = this.accessOrder.shift();
@@ -62,12 +68,14 @@ class FrameCache {
           evicted.src = '';
         }
         this.cache.delete(oldest);
+        this.inFlightLoads.delete(oldest);
       }
     }
 
     img = new Image();
     let handled = false;
     const handleLoad = () => {
+      this.inFlightLoads.delete(index);
       if (handled) return;
       handled = true;
       if (onLoaded) onLoaded();
@@ -111,6 +119,7 @@ class FrameCache {
       img.src = '';
     });
     this.cache.clear();
+    this.inFlightLoads.clear();
     this.accessOrder = [];
   }
 }
@@ -127,7 +136,7 @@ export const BannerHero: React.FC<BannerHeroProps> = () => {
 
   useEffect(() => {
     const isMobile = checkIsMobile();
-    const maxCapacity = isMobile ? 12 : 30;
+    const maxCapacity = isMobile ? 16 : 40;
     const frameCache = new FrameCache(maxCapacity);
     frameCacheRef.current = frameCache;
 
@@ -216,12 +225,21 @@ export const BannerHero: React.FC<BannerHeroProps> = () => {
       lastRenderedFrameRef.current = frameIndex;
     }
 
-    // Preload sliding window of frames around active scroll index
-    function preloadWindow(currentIndex: number) {
+    // Preload sliding window of frames focused on current scroll direction
+    function preloadWindow(currentIndex: number, isScrollingDown: boolean) {
       if (!frameCacheRef.current) return;
       const isMob = checkIsMobile();
-      const lookahead = isMob ? 4 : 8;
-      const lookback = isMob ? 2 : 4;
+
+      let lookahead: number;
+      let lookback: number;
+
+      if (isMob) {
+        lookahead = isScrollingDown ? 6 : 1;
+        lookback = isScrollingDown ? 1 : 6;
+      } else {
+        lookahead = isScrollingDown ? 12 : 2;
+        lookback = isScrollingDown ? 2 : 12;
+      }
 
       const start = Math.max(0, currentIndex - lookback);
       const end = Math.min(TOTAL_FRAMES - 1, currentIndex + lookahead);
@@ -267,7 +285,7 @@ export const BannerHero: React.FC<BannerHeroProps> = () => {
         TOTAL_FRAMES - 1,
         Math.max(0, Math.round(currentScrollFractionRef.current * (TOTAL_FRAMES - 1)))
       );
-      preloadWindow(currentFrame);
+      preloadWindow(currentFrame, true);
       drawFrame(currentFrame, true);
     }
 
@@ -318,13 +336,15 @@ export const BannerHero: React.FC<BannerHeroProps> = () => {
         currentScrollFractionRef.current = targetScrollFractionRef.current;
       }
 
+      const isScrollingDown = delta >= 0;
+
       const rawIndex = currentScrollFractionRef.current * (TOTAL_FRAMES - 1);
       const frameIndex = Math.min(
         TOTAL_FRAMES - 1,
         Math.max(0, Math.round(rawIndex))
       );
 
-      preloadWindow(frameIndex);
+      preloadWindow(frameIndex, isScrollingDown);
       drawFrame(frameIndex);
 
       animationFrameId = requestAnimationFrame(renderLoop);
